@@ -2,6 +2,9 @@ import requests
 import pandas as pd
 from geopy.geocoders import Nominatim
 import matplotlib.pyplot as plt
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 def obter_coordenadas_por_cidade():
     # Converter a resposta JSON para um dicionário Python
@@ -51,7 +54,7 @@ def Dados_Atuais():
     pd.set_option('display.max_rows', None)  # Mostrar todas as linhas
     # print(hourly_dataframe)
 
-    print(hourly_dataframe1)
+    return hourly_dataframe1
     
 def Dados_Diarios():
     # Converter a resposta JSON para um dicionário Python
@@ -68,7 +71,7 @@ def Dados_Diarios():
     daily_dataframe1 = pd.DataFrame(data=daily_data)
 
     pd.set_option('display.max_rows', None)  # Mostrar todas as linhas
-    print(daily_dataframe1)
+    return daily_dataframe1
         
 def calcular_media_por_dia(dataframe):
     # Excluir a coluna 'hora' antes de calcular a média
@@ -140,9 +143,35 @@ def visualizar_grafico_de_Hora_precipitacao(dataframe):
         print("Coluna 'prob_precipitacao' não encontrada no DataFrame.")
 
 
+def EnviaEmail(destinatario, dataframe):
+    
+    # Configurações do servidor de e-mail
+    servidor_email = "cineplus.gerencia@gmail.com"  # Insira o seu endereço de e-mail
+    senha_email = "gjdi gdxb ooqf jbyd"
+    servidor_smtp = "smtp.gmail.com"
+    porta_smtp = 587
+
+    # Criar objeto MIMEMultipart para representar a mensagem de e-mail
+    msg = MIMEMultipart()
+    msg['From'] = servidor_email
+    msg['To'] = destinatario
+    msg['Subject'] = 'Clima'
+
+    # Adicionar o corpo do e-mail (dados do dataframe) como texto
+    corpo_email = "Dados Meteorológicos por Hora:\n\n" + dataframe.to_string()
+    msg.attach(MIMEText(corpo_email))
+
+    # Conectar e enviar e-mail
+    with smtplib.SMTP(servidor_smtp, porta_smtp) as server:
+        server.starttls()
+        server.login(servidor_email, senha_email)
+        server.sendmail(servidor_email, destinatario, msg.as_string())
+
+    print(f"E-mail enviado para {destinatario} com sucesso!") 
+
 if __name__ == "__main__":
     # Solicitar ao usuário digitar o nome da cidade
-    cidade_nome = "Picos"
+    cidade_nome = "Santana do Piaui"
     
     # Instanciar o geolocalizador
     geolocator = Nominatim(user_agent="my_geocoder")
@@ -156,6 +185,12 @@ if __name__ == "__main__":
         latitude = location.latitude
         longitude = location.longitude
         print(f"Latitude: {latitude}, Longitude: {longitude}")
+        reverse_location = geolocator.reverse((latitude, longitude))
+
+        # Tente obter o nome da cidade
+        city_name = reverse_location.raw.get('address', {}).get('village', 'Nome da cidade não disponível')
+        print(f"Nome da cidade: {city_name}")
+        
     else:
             print("Cidade não encontrada.")
     # Configurar os parâmetros da solicitação
@@ -196,10 +231,25 @@ if __name__ == "__main__":
                 elif opcao == "1":
                     # dataframe = obter_coordenadas_por_cidade(latitude, longitude)
                     print(dataframe)
+                    op = input("Deseja receber esses dados por email?(S/N)").upper()
+                    if op == "S":
+                        destinatario = input("Digite o endereço de e-mail do destinatário: ")
+                        EnviaEmail(destinatario,dataframe)
                 elif opcao == "2":
-                    Dados_Atuais()
+                    df = Dados_Atuais()
+                    print(df)
+                    op = input("Deseja receber esses dados por email?(S/N)").upper()
+                    if op == "S":
+                        destinatario = input("Digite o endereço de e-mail do destinatário: ")
+                        EnviaEmail(destinatario,df)
                 elif opcao == "3":
-                    Dados_Diarios()
+                    df = Dados_Diarios()
+                    print(df)
+                    op = input("Deseja receber esses dados por email?(S/N)").upper()
+                    if op == "S":
+                        destinatario = input("Digite o endereço de e-mail do destinatário: ")
+                        EnviaEmail(destinatario,df)
+                    
                 elif opcao == "4": 
                         # media_por_dia = calcular_media_por_dia(dataframe)
                         print(media_por_dia)
@@ -210,9 +260,13 @@ if __name__ == "__main__":
                     if novo_dataframe is not None:
                         print("\nNovo DataFrame:")
                         print(novo_dataframe)
-
                     else:
                         print(f"Nenhum dado disponível para a data {data_selecionada}.")
+                        
+                    op = input("Deseja receber esses dados por email?(S/N)").upper()
+                    if op == "S":
+                        destinatario = input("Digite o endereço de e-mail do destinatário: ")
+                        EnviaEmail(destinatario,novo_dataframe)
                         
                 elif opcao == "6":
                     visualizar_grafico_de_media_precipitacao(media_por_dia)
@@ -222,8 +276,10 @@ if __name__ == "__main__":
                         visualizar_grafico_de_Hora_precipitacao(novo_dataframe)
                     except:
                         print("Execute o item 5 primeiro.")
+                        
                 else:
                     print("Opção inválida. Tente novamente.\n")
+                
         
     else:
         print(f"A solicitação falhou com o código de status: {response.status_code}")
