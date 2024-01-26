@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
-class WeatherApp:
+class Temposinc:
     
     def __init__(self, cidade_nome):
         self.cidade_nome = cidade_nome
@@ -30,12 +30,12 @@ class WeatherApp:
 
         # Verificar se a solicitação foi bem-sucedida (código de status 200)
         if self.response.status_code == 200:
-            self.dataframe = self.obter_coordenadas_por_cidade()
+            self.dataframe = self.obter_previsao_hora_prox_7_dias()
             self.media_por_dia = self.calcular_media_por_dia()
 
-            # Loop principal
-            while True:
-                self.exibir_menu()
+            # # Loop principal
+            # while True:
+            #     self.exibir_menu()
         else:
             print(f"A solicitação falhou com o código de status: {self.response.status_code}")
 
@@ -44,14 +44,13 @@ class WeatherApp:
         if location:
             latitude = location.latitude
             longitude = location.longitude
-            print(f"Latitude: {latitude}, Longitude: {longitude}")
+            # print(f"Latitude: {latitude}, Longitude: {longitude}")
             return latitude, longitude
         else:
             print("Cidade não encontrada.")
             exit()
 
-    def obter_coordenadas_por_cidade(self):
-        
+    def obter_previsao_hora_prox_7_dias(self):##
         data = self.response.json()
         hourly_data = {
             "data": pd.to_datetime(data['hourly']['time'], format='%Y-%m-%dT%H:%M', errors='coerce'),
@@ -67,75 +66,76 @@ class WeatherApp:
         hourly_dataframe['data'] = hourly_dataframe['data'].dt.strftime('%Y-%m-%d')
         hourly_dataframe = hourly_dataframe[['data', 'hora'] + [col for col in hourly_dataframe.columns if col not in ['data', 'hora']]]
         pd.set_option('display.max_rows', None)
+        
         return hourly_dataframe
 
-    def calcular_media_por_dia(self):
+    def calcular_media_por_dia(self):##
         dataframe = self.dataframe.drop(columns=['hora'], errors='ignore')
         media_por_dia = dataframe.groupby('data').mean().reset_index()
         return media_por_dia
 
-    def exibir_menu(self):
-        print("\nMenu:")
-        print("0 - Sair")
-        print("1 - Obter dados meteorológicos por Hora na cidade em 7 dias")
-        print("2 - Obter dados do dia atual da Cidade")
-        print("3 - Obter dados dos 7 próximos dias")
-        print("4 - Obter média dos dados meteorológicos por hora dos 7 dias na cidade")
-        print("5 - Obter dados da Hora por data na cidade")
-        print("6 - Visualizar por gráfico a média de chance de precipitação nos próximos 7 dias na Cidade")
-        print("7 - Visualizar por gráfico (Hora) a chance de precipitação na Cidade")
+    # def exibir_menu(self):
+    #     print("\nMenu:")
+    #     print("0 - Sair")
+    #     print("1 - Obter dados meteorológicos por Hora na cidade em 7 dias")
+    #     print("2 - Obter dados do dia atual da Cidade")
+    #     print("3 - Obter dados dos 7 próximos dias")
+    #     print("4 - Obter média dos dados meteorológicos por hora dos 7 dias na cidade")
+    #     print("5 - Obter dados da Hora por data na cidade")
+    #     print("6 - Visualizar por gráfico a média de chance de precipitação nos próximos 7 dias na Cidade")
+    #     print("7 - Visualizar por gráfico (Hora) a chance de precipitação na Cidade")
 
-        opcao = input("Escolha uma opção: ")
+    #     opcao = input("Escolha uma opção: ")
 
-        if opcao == "0":
-            exit()
-        elif opcao == "1":
-            print(self.dataframe)
-            op = input("Deseja receber esses dados por email?(S/N)").upper()
-            if op == "S":
-                destinatario = input("Digite o endereço de e-mail do destinatário: ")
-                self.enviar_email(destinatario, self.dataframe)
-        elif opcao == "2":
-            df = self.dados_atuais()
-            print(df)
-            op = input("Deseja receber esses dados por email?(S/N)").upper()
-            if op == "S":
-                destinatario = input("Digite o endereço de e-mail do destinatário: ")
-                self.enviar_email(destinatario, df)
-        elif opcao == "3":
-            df = self.dados_diarios()
-            print(df)
-            op = input("Deseja receber esses dados por email?(S/N)").upper()
-            if op == "S":
-                destinatario = input("Digite o endereço de e-mail do destinatário: ")
-                self.enviar_email(destinatario, df)
-        elif opcao == "4":
-            print(self.media_por_dia)
-        elif opcao == "5":
-            data_selecionada = input("Digite a data no formato YYYY-MM-DD: ")
-            novo_dataframe = self.obter_dados_por_dia(data_selecionada)
-            if novo_dataframe is not None:
-                print("\nNovo DataFrame:")
-                print(novo_dataframe)
-            else:
-                print(f"Nenhum dado disponível para a data {data_selecionada}.")
-            op = input("Deseja receber esses dados por email?(S/N)").upper()
-            if op == "S":
-                destinatario = input("Digite o endereço de e-mail do destinatário: ")
-                self.enviar_email(destinatario, novo_dataframe)
-        elif opcao == "6":
-            self.visualizar_grafico_de_media_precipitacao()
-        elif opcao == "7":
-            data_selecionada = input("Digite a data no formato YYYY-MM-DD: ")
-            novo_dataframe = self.obter_dados_por_dia(data_selecionada)
-            if novo_dataframe is not None:
-                self.visualizar_grafico_de_hora_precipitacao(novo_dataframe)
-            else:
-                print(f"Nenhum dado disponível para a data {data_selecionada}.")
-        else:
-            print("Opção inválida. Tente novamente.\n")
+    #     if opcao == "0":
+    #         exit()
+    #     elif opcao == "1":
+    #         print(self.dataframe)
+    #         op = input("Deseja receber esses dados por email?(S/N)").upper()
+    #         if op == "S":
+    #             destinatario = input("Digite o endereço de e-mail do destinatário: ")
+    #             self.enviar_email(destinatario, self.dataframe)
+    #     elif opcao == "2":
+    #         df = self.obter_dados_cli_atual()
+    #         print(df)
+    #         op = input("Deseja receber esses dados por email?(S/N)").upper()
+    #         if op == "S":
+    #             destinatario = input("Digite o endereço de e-mail do destinatário: ")
+    #             self.enviar_email(destinatario, df)
+    #     elif opcao == "3":
+    #         df = self.dados_diarios_prox_7_dias()
+    #         print(df)
+    #         op = input("Deseja receber esses dados por email?(S/N)").upper()
+    #         if op == "S":
+    #             destinatario = input("Digite o endereço de e-mail do destinatário: ")
+    #             self.enviar_email(destinatario, df)
+    #     elif opcao == "4":
+    #         print(self.media_por_dia)
+    #     elif opcao == "5":
+    #         data_selecionada = input("Digite a data no formato YYYY-MM-DD: ")
+    #         novo_dataframe = self.obter_dados_do_dia_atual_por_hora(data_selecionada)
+    #         if novo_dataframe is not None:
+    #             print("\nNovo DataFrame:")
+    #             print(novo_dataframe)
+    #         else:
+    #             print(f"Nenhum dado disponível para a data {data_selecionada}.")
+    #         op = input("Deseja receber esses dados por email?(S/N)").upper()
+    #         if op == "S":
+    #             destinatario = input("Digite o endereço de e-mail do destinatário: ")
+    #             self.enviar_email(destinatario, novo_dataframe)
+    #     elif opcao == "6":
+    #         self.visualizar_grafico_de_media_precipitacao()
+    #     elif opcao == "7":
+    #         data_selecionada = input("Digite a data no formato YYYY-MM-DD: ")
+    #         novo_dataframe = self.obter_dados_do_dia_atual_por_hora(data_selecionada)
+    #         if novo_dataframe is not None:
+    #             self.visualizar_grafico_de_hora_precipitacao(novo_dataframe)
+    #         else:
+    #             print(f"Nenhum dado disponível para a data {data_selecionada}.")
+    #     else:
+    #         print("Opção inválida. Tente novamente.\n")
 
-    def dados_atuais(self):
+    def obter_dados_cli_atual(self):
         data = self.response.json()
         current_data = {
             "data": pd.to_datetime(data['current']['time'], format='%Y-%m-%dT%H:%M', errors='coerce'),
@@ -146,9 +146,11 @@ class WeatherApp:
         }
         hourly_dataframe1 = pd.DataFrame(data=current_data, index=[0])
         pd.set_option('display.max_rows', None)
+        
+        
         return hourly_dataframe1
 
-    def dados_diarios(self):
+    def dados_diarios_prox_7_dias(self):
         data = self.response.json()
         daily_data = {
             "temperatura_maxima_2m": data['daily']['temperature_2m_max'],
@@ -159,12 +161,14 @@ class WeatherApp:
         }
         daily_dataframe1 = pd.DataFrame(data=daily_data)
         pd.set_option('display.max_rows', None)
+        
         return daily_dataframe1
 
-    def obter_dados_por_dia(self, data_selecionada):
+    def obter_dados_do_dia_atual_por_hora(self, data_selecionada):
         dataframe = self.dataframe.copy()
         dataframe['data'] = pd.to_datetime(dataframe['data'])
         dados_do_dia = dataframe[dataframe['data'] == pd.to_datetime(data_selecionada)].reset_index(drop=True)
+        
         return dados_do_dia
 
     def visualizar_grafico_de_media_precipitacao(self):
@@ -181,8 +185,10 @@ class WeatherApp:
                 plt.text(bar.get_x() + bar.get_width() / 2, yval + 1, f"{yval:.2f}%", ha='center', va='bottom', color='black')
             plt.tight_layout()
             plt.show()
+
         else:
             print("Coluna 'prob_precipitacao' não encontrada no DataFrame.")
+
 
     def visualizar_grafico_de_hora_precipitacao(self, dataframe):
         if 'prob_precipitacao' in dataframe.columns:
@@ -198,12 +204,13 @@ class WeatherApp:
                 plt.text(bar.get_x() + bar.get_width() / 2, yval + 1, f"{yval:.2f}%", ha='center', va='bottom', color='black')
             plt.tight_layout()
             plt.show()
+
         else:
             print("Coluna 'prob_precipitacao' não encontrada no DataFrame ou dados não disponíveis para a data.")
 
     def enviar_email(self, destinatario, dataframe):
-        servidor_email = "cineplus.gerencia@gmail.com"
-        senha_email = "gjdi gdxb ooqf jbyd"
+        servidor_email = "temposinc.gerencia@gmail.com"
+        senha_email = "expo fepk nqts gjyb"
         servidor_smtp = "smtp.gmail.com"
         porta_smtp = 587
 
@@ -225,4 +232,4 @@ class WeatherApp:
 
 if __name__ == "__main__":
     cidade_nome = "Santana do Piaui"
-    app = WeatherApp(cidade_nome)
+    app = Temposinc(cidade_nome)

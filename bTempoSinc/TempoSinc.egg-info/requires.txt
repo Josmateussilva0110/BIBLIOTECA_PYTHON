@@ -2,5 +2,3 @@ requests
 pandas
 geopy
 matplotlib
-smtplib
-email.mime

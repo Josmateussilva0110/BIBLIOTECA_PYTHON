@@ -1,11 +1,11 @@
 Metadata-Version: 2.1
-Name: TempoSinc11
-Version: 0.0.5
+Name: TempoSinc
+Version: 0.0.2
 Summary: Previsão de tempo
-Author: RaiLeal/JoseMateus
-Author-email: cineplus.gerencia@gmail.com
+Author: RaiLeal
+Author-email: temposinc.gerencia@gmail.com
 License: MIT License
-Keywords: Tempo
+Keywords: TempoSinc
 Description-Content-Type: text/markdown
 License-File: LICENCE
 

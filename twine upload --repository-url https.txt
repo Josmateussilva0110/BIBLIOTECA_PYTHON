@@ -1,0 +1,4 @@
+twine upload --repository-url https://test.pypi.org/legacy/ -u __token__ -p <your_api_token> dist/*
+
+
+twine upload --repository-url https://test.pypi.org/legacy/ -u __token__ -p "pypi-AgENdGVzdC5weXBpLm9yZwIkNWI4NzM5OTgtYTNhMi00ZDhhLTg4MDMtYmM1MjJhOGQ4YTU2AAIqWzMsIjVkYzFlN2FhLTVlNTktNGE5ZC1hNGVlLWQxYTVkMGIwNTgzNyJdAAAGINBlt-br0xTMsSq3pGNQZuyxwShEfwnyY9KrZwe2R3Ud" dist/*

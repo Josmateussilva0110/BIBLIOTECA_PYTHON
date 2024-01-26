@@ -1,8 +1,0 @@
-LICENCE
-README.md
-setup.py
-TempoSinc11.egg-info/PKG-INFO
-TempoSinc11.egg-info/SOURCES.txt
-TempoSinc11.egg-info/dependency_links.txt
-TempoSinc11.egg-info/requires.txt
-TempoSinc11.egg-info/top_level.txt
