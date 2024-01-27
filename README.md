@@ -10,3 +10,28 @@ A classe Temposinc foi desenvolvida como uma ferramenta versátil para a obtenç
 •	Elaboração de um gráfico que representa a probabilidade de ocorrência de chuva nos próximos sete dias.  
 •	Elaboração de um gráfico que representa a probabilidade de ocorrência de chuva por hora de um dia em específico.  
 •	Envio de dados climáticos por e-mail.  
+# Como usar  
+### Importar a biblioteca <br>  
+```python
+    pip install TempoSinc==0.0.2
+```
+
+### Cria a instância da classe passando o nome da cidade como parâmetro 
+```python
+    a = Temposinc("picos")
+```
+
+# Usando metodos:  
+### Obter cordenadas de uma cidade  
+```python
+    aa = a.obter_coordenadas()
+    print(aa)
+```
+Vai retornar a latitude e longitude da cidade escolhida.  
+### Obter previsão de tempo para os proxímos sete dias
+
+```python
+  aa = a.dados_diarios_prox_7_dias()
+  print(aa)
+```
+Vai retornar dados como temperatura máxima, temperatura minima, indice UV, probabilidade de chuva e velocidade do vento.
