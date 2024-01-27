@@ -34,4 +34,12 @@ Vai retornar a latitude e longitude da cidade escolhida.
   aa = a.dados_diarios_prox_7_dias()
   print(aa)
 ```
-Vai retornar dados como temperatura máxima, temperatura minima, indice UV, probabilidade de chuva e velocidade do vento.
+Vai retornar dados como temperatura máxima, temperatura minima, indice UV, probabilidade de chuva e velocidade do vento.  
+### Obter a media de temperatura para os proxímos sete dias  
+```python
+  aa = a.calcular_media_por_dia()
+  print(aa)
+```
+Vai retornar a media de todas as unidades citadas acima.  
+
+
