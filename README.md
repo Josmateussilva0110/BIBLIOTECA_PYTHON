@@ -13,7 +13,7 @@ A classe Temposinc foi desenvolvida como uma ferramenta versátil para a obtenç
 # Como usar  
 ### Importar a biblioteca <br>  
 ```python
-    pip install TempoSinc==0.0.2
+    pip install TempoSinc
 ```
 
 ### Cria a instância da classe passando o nome da cidade como parâmetro 

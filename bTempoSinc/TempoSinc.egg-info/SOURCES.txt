@@ -1,7 +1,6 @@
 LICENCE
 README.md
 setup.py
-TempoSinc/Original.py
 TempoSinc/TempoSinc.py
 TempoSinc/__init__.py
 TempoSinc.egg-info/PKG-INFO

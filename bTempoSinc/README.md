@@ -1,12 +1,12 @@
-# Descrição  
-A classe Temposinc foi desenvolvida como uma ferramenta versátil para a obtenção e análise de dados de previsão do tempo. Com funcionalidades abrangentes, ela permite não apenas a recuperação das coordenadas de uma cidade, mas também a obtenção detalhada da previsão do tempo para os próximos 7 dias. Além disso, oferece recursos para calcular médias diárias, visualizar probabilidades de precipitação de chuva através de gráficos interativos e até mesmo compartilhar essas informações meteorológicas por e-mail.  
+# Descricao  
+A classe Temposinc foi desenvolvida como uma ferramenta versatil para a obtencao e analise de dados de previsao do tempo. Com funcionalidades abrangentes, ela permite nao apenas a recuperacao das coordenadas de uma cidade, mas tambem a obtencao detalhada da previsao do tempo para os proximos 7 dias. Alem disso, oferece recursos para calcular medias diarias, visualizar probabilidades de precipitacao de chuva atraves de graficos interativos e ate mesmo compartilhar essas informacoes meteorologicas por e-mail.  
 # Funcionalidades  
-•	Obter cordenadas de uma cidade.  
-•	Obter previsão de tempo para os proxímos sete dias.  
-•	Obter a media de temperatura para os proxímos sete dias.   
-•	Obter previsão da temperatura atual.  
-•	Obter previsão da temperatura por hora para os proxímos sete dias.  
-•	Obter previsão da temperatura por hora de um dia em específico.  
-•	Elaboração de um gráfico que representa a probabilidade de ocorrência de chuva nos próximos sete dias.  
-•	Elaboração de um gráfico que representa a probabilidade de ocorrência de chuva por hora de um dia em específico.  
-•	Envio de dados climáticos por e-mail.  
+-> Obter cordenadas de uma cidade.  
+-> Obter previsao de tempo para os proximos sete dias.  
+-> Obter a media de temperatura para os proximos sete dias.   
+-> Obter previsao da temperatura atual.  
+-> Obter previsao da temperatura por hora para os proxímos sete dias.  
+-> Obter previsao da temperatura por hora de um dia em especifico.  
+-> Elaboracao de um grafico que representa a probabilidade de ocorrencia de chuva nos proximos sete dias.  
+-> Elaboracao de um grafico que representa a probabilidade de ocorrencia de chuva por hora de um dia em especifico.  
+-> Envio de dados climaticos por e-mail.  

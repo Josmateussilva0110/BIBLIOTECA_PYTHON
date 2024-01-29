@@ -3,9 +3,9 @@ with open("README.md", "r") as arq:
     readme = arq.read()
 
 setup(name='TempoSinc',
-    version='0.0.2',
+    version='0.0.5',
     license='MIT License',
-    author='RaiLeal',
+    author='RaiLeal/JoseMateus',
     long_description=readme,
     long_description_content_type="text/markdown",
     author_email='temposinc.gerencia@gmail.com',
