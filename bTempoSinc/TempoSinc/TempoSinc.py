@@ -8,6 +8,34 @@ from email.mime.multipart import MIMEMultipart
 
 
 class Temposinc:
+    """ 
+    Uma classe para obter e processar dados de previsão do tempo.
+    Fornece métodos para obter previsões meteorológicas por hora e diárias, calcular médias diárias,
+    e visualizar dados de precipitação por meio de gráficos. Também inclui funcionalidades
+    para enviar dados meteorológicos por e-mail.
+
+    Attributes:
+        cidade_nome (str): O nome da cidade para a qual a previsão do tempo é obtida.
+        geolocator (Nominatim): Uma instância da classe geopy.geocoders.Nominatim para obter
+                                coordenadas de latitude e longitude da cidade especificada.
+        latitude (float): A coordenada de latitude da cidade.
+        longitude (float): A coordenada de longitude da cidade.
+        url (str): A URL base para a API Open-Meteo.
+        params (dict): Parâmetros para a solicitação à API, incluindo latitude, longitude e tipos de dados meteorológicos.
+        response (Response): O objeto de resposta obtido da solicitação à API.
+        dataframe (DataFrame): DataFrame Pandas contendo os dados de previsão do tempo por hora.
+        media_por_dia (DataFrame): DataFrame Pandas contendo a média diária dos dados meteorológicos.
+
+    Methods:
+        obter_coordenadas(): Obtém as coordenadas de latitude e longitude da cidade especificada.
+        obter_previsao_hora_prox_7_dias(): Extrai e formata dados de previsão do tempo por hora para os próximos 7 dias.
+        calcular_media_por_dia(): Calcula a média diária dos dados meteorológicos.
+        obter_dados_cli_atual(): Obtém os dados meteorológicos atuais para a cidade especificada.
+        dados_diarios_prox_7_dias(): Extrai e formata dados de previsão do tempo diários para os próximos 7 dias.
+        obter_dados_do_dia_atual_por_hora(data_selecionada): Extrai dados meteorológicos por hora para uma data específica.
+        visualizar_grafico_de_media_precipitacao(): Exibe um gráfico de barras mostrando a média de precipitação para os próximos 7 dias.
+        visualizar_grafico_de_hora_precipitacao(dataframe): Exibe um gráfico de barras mostrando a precipitação por hora para uma data específica.
+        enviar_email(destinatario, dataframe): Envia dados meteorológicos por e-mail para o destinatário especificado. """
     
     def __init__(self, cidade_nome):
         self.cidade_nome = cidade_nome
@@ -40,6 +68,17 @@ class Temposinc:
             print(f"A solicitação falhou com o código de status: {self.response.status_code}")
 
     def obter_coordenadas(self):
+        """
+        Obtém as coordenadas de latitude e longitude da cidade especificada.
+
+        Returns:
+        -------
+        tuple
+            Uma tupla contendo as coordenadas de latitude e longitude, respectivamente.
+
+        Se a cidade não for encontrada, imprime uma mensagem de erro e encerra o programa.
+        """
+
         location = self.geolocator.geocode(self.cidade_nome)
         if location:
             latitude = location.latitude
@@ -51,6 +90,19 @@ class Temposinc:
             exit()
 
     def obter_previsao_hora_prox_7_dias(self):##
+        """
+        Obtém e formata os dados de previsão do tempo por hora para os próximos 7 dias.
+
+        Returns:
+        -------
+        DataFrame
+            Um DataFrame Pandas contendo as previsões meteorológicas por hora.
+
+        Utiliza a resposta da solicitação à API para extrair informações como temperatura, umidade,
+        temperatura aparente, probabilidade de precipitação e velocidade do vento por hora. Formata
+        esses dados em um DataFrame e adiciona colunas para data, hora e organiza a ordem das colunas.
+        """
+
         data = self.response.json()
         hourly_data = {
             "data": pd.to_datetime(data['hourly']['time'], format='%Y-%m-%dT%H:%M', errors='coerce'),
@@ -70,6 +122,18 @@ class Temposinc:
         return hourly_dataframe
 
     def calcular_media_por_dia(self):##
+        """
+        Calcula a média diária dos dados meteorológicos.
+
+        Returns:
+        -------
+        DataFrame
+            Um DataFrame Pandas contendo a média diária dos dados meteorológicos.
+
+        Remove a coluna 'hora' do DataFrame original, se existir, e calcula a média dos valores
+        agrupados por data. O resultado é um novo DataFrame contendo a média diária dos dados.
+        """
+
         dataframe = self.dataframe.drop(columns=['hora'], errors='ignore')
         media_por_dia = dataframe.groupby('data').mean().reset_index()
         return media_por_dia
@@ -136,6 +200,19 @@ class Temposinc:
     #         print("Opção inválida. Tente novamente.\n")
 
     def obter_dados_cli_atual(self):
+        """
+        Obtém os dados meteorológicos atuais para a cidade especificada.
+
+        Returns:
+        -------
+        DataFrame
+            Um DataFrame Pandas contendo os dados meteorológicos atuais.
+
+        Extrai informações como temperatura, umidade, temperatura aparente e velocidade do vento
+        a partir da resposta da solicitação à API. Formata esses dados em um DataFrame, criando
+        uma única linha com os valores atuais.
+        """
+
         data = self.response.json()
         current_data = {
             "data": pd.to_datetime(data['current']['time'], format='%Y-%m-%dT%H:%M', errors='coerce'),
@@ -151,6 +228,19 @@ class Temposinc:
         return hourly_dataframe1
 
     def dados_diarios_prox_7_dias(self):
+        """
+        Extrai e formata dados de previsão do tempo diários para os próximos 7 dias.
+
+        Returns:
+        -------
+        DataFrame
+            Um DataFrame Pandas contendo as previsões meteorológicas diárias.
+
+        Utiliza a resposta da solicitação à API para extrair informações como temperatura máxima,
+        temperatura mínima, índice UV, probabilidade máxima de precipitação e velocidade máxima do vento
+        para cada dia. Formata esses dados em um DataFrame.
+        """
+
         data = self.response.json()
         daily_data = {
             "temperatura_maxima_2m": data['daily']['temperature_2m_max'],
@@ -165,6 +255,23 @@ class Temposinc:
         return daily_dataframe1
 
     def obter_dados_do_dia_atual_por_hora(self, data_selecionada):
+        """
+        Extrai dados meteorológicos por hora para uma data específica.
+
+        Parameters
+        ----------
+            data_selecionada (str): 
+                A data no formato YYYY-MM-DD para a qual os dados serão extraídos.
+
+        Returns
+        -------
+            DataFrame:
+                Um DataFrame Pandas contendo os dados meteorológicos por hora para a data especificada.
+
+        Cria uma cópia do DataFrame original, converte a coluna 'data' para o tipo datetime e filtra os dados
+        para incluir apenas as entradas correspondentes à data especificada. Retorna o DataFrame resultante.
+        """
+
         dataframe = self.dataframe.copy()
         dataframe['data'] = pd.to_datetime(dataframe['data'])
         dados_do_dia = dataframe[dataframe['data'] == pd.to_datetime(data_selecionada)].reset_index(drop=True)
@@ -172,6 +279,14 @@ class Temposinc:
         return dados_do_dia
 
     def visualizar_grafico_de_media_precipitacao(self):
+        """
+        Exibe um gráfico de barras mostrando a média de precipitação para os próximos 7 dias.
+
+        Verifica se a coluna 'prob_precipitacao' está presente no DataFrame de média diária.
+        Se presente, gera um gráfico de barras utilizando os dados dessa coluna, exibindo a média
+        de precipitação para cada dia. Caso contrário, imprime uma mensagem de erro.
+        """
+
         if 'prob_precipitacao' in self.media_por_dia.columns:
             plt.figure(figsize=(12, 6))
             bars = plt.bar(self.media_por_dia['data'], self.media_por_dia['prob_precipitacao'], color='skyblue', alpha=0.7)
@@ -191,6 +306,19 @@ class Temposinc:
 
 
     def visualizar_grafico_de_hora_precipitacao(self, dataframe):
+        """
+        Exibe um gráfico de barras mostrando a probabilidade de precipitação por hora para uma data específica.
+
+        Parameters
+        ----------
+        dataframe (DataFrame): 
+            Um DataFrame Pandas contendo os dados meteorológicos por hora para a data especificada.
+
+        Verifica se a coluna 'prob_precipitacao' está presente no DataFrame fornecido.
+        Se presente, gera um gráfico de barras utilizando os dados dessa coluna, exibindo a probabilidade
+        de precipitação para cada hora. Caso contrário, imprime uma mensagem de erro.
+        """
+
         if 'prob_precipitacao' in dataframe.columns:
             plt.figure(figsize=(12, 6))
             bars = plt.bar(dataframe['hora'], dataframe['prob_precipitacao'], color='lightgreen', alpha=0.7)
@@ -209,6 +337,18 @@ class Temposinc:
             print("Coluna 'prob_precipitacao' não encontrada no DataFrame ou dados não disponíveis para a data.")
 
     def enviar_email(self, destinatario, dataframe):
+        """
+        Envia um e-mail com os dados meteorológicos para o destinatário especificado.
+
+        Parameters
+        ----------
+            destinatario (str): O endereço de e-mail do destinatário.
+            dataframe (DataFrame): Um DataFrame Pandas contendo os dados meteorológicos.
+
+        Utiliza o servidor SMTP do Gmail para enviar um e-mail contendo os dados meteorológicos
+        formatados como texto. O e-mail é enviado para o destinatário especificado.
+        """
+
         servidor_email = "temposinc.gerencia@gmail.com"
         senha_email = "expo fepk nqts gjyb"
         servidor_smtp = "smtp.gmail.com"
